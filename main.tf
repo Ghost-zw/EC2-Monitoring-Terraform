@@ -30,6 +30,11 @@ resource "aws_sns_topic_subscription" "email" {
     endpoint = var.email
 }
 
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_file = "lambda/lambda.py"
+  output_path = "lambda/lambda.zip"
+}
 /* IAM Role of Lambda */
 resource "aws_iam_role" "lambda_role" {
     name = "lambda-ec2-role"
@@ -119,8 +124,3 @@ resource "aws_lambda_permission" "allow_events" {
     source_arn = aws_cloudwatch_event_rule.ec2_rule.arn  
 }
 
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_file = "lambda/lambda.py"
-  output_path = "lambda/lambda.zip"
-}
