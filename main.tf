@@ -88,7 +88,7 @@ resource "aws_lambda_function" "monitor" {
     runtime = "python3.9"
     role    = aws_iam_role.lambda_role.arn
 
-    depends_on = [data.archive_file.lambda_zip]  # 👈 ADD THIS
+    
 
     environment {
         variables = {
