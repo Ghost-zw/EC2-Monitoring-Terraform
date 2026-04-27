@@ -5,7 +5,7 @@ provider "aws"{
 /* SNS Topic */
 
 resource "aws_sns_topic" "alerts" {
-    name = "ec2-alerts-topic"
+    name = "ec2-alerts-topic-v2"
 }
 
 /* Email subsciption */
