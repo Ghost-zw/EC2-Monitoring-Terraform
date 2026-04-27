@@ -58,12 +58,12 @@ resource "aws_iam_role_policy" "lambda_policy" {
 resource "aws_lambda_function" "monitor" {
     function_name = "ec2-monitor"
 
-    filename = "lambda/lambda.zip"
+    filename         = data.archive_file.lambda_zip.output_path
     handler = "lambda.lambda_handler"
     runtime = "python3.9"
     role = aws_iam_role.lambda_role.arn
 
-    source_code_hash = filebase64sha256("lambda/lambda.zip")
+    source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 
     environment {
         variables = {
@@ -98,4 +98,10 @@ resource "aws_lambda_permission" "allow_events" {
     function_name = aws_lambda_function.monitor.function_name
     principal = "events.amazonaws.com"
     source_arn = aws_cloudwatch_event_rule.ec2_rule.arn  
+}
+
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_file = "lambda/lambda.py"
+  output_path = "lambda/lambda.zip"
 }
