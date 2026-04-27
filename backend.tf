@@ -3,6 +3,6 @@ terraform {
     bucket         = "my-terraform-state-bucket45"
     key            = "ec2-monitoring/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "terraform-locks"
+    use_lockfile = "terraform-locks"
   }
 }
