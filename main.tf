@@ -124,3 +124,5 @@ resource "aws_lambda_permission" "allow_events" {
     source_arn = aws_cloudwatch_event_rule.ec2_rule.arn  
 }
 
+# just add a comment
+# trigger pipeline
