@@ -1,3 +1,17 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.0"
+    }
+  }
+}
+
 provider "aws"{
     region = "us-east-1"
 }
@@ -40,7 +54,11 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Version = "2012-10-17"
         Statement = [
             {
-                Action = ["logs:*"]
+                Action = [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                    ]
                 Effect = "Allow"
                 Resource = "*"
             },
@@ -54,21 +72,22 @@ resource "aws_iam_role_policy" "lambda_policy" {
   
 }
 
-/* Lmabda Function */
+/* Lambda Function */
 resource "aws_lambda_function" "monitor" {
     function_name = "ec2-monitor"
 
     filename         = data.archive_file.lambda_zip.output_path
+    source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+
     handler = "lambda.lambda_handler"
     runtime = "python3.9"
-    role = aws_iam_role.lambda_role.arn
+    role    = aws_iam_role.lambda_role.arn
 
-    source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+    depends_on = [data.archive_file.lambda_zip]  # 👈 ADD THIS
 
     environment {
         variables = {
             SNS_TOPIC = aws_sns_topic.alerts.arn
-
         }
     }
 }
